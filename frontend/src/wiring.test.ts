@@ -13,7 +13,7 @@ describe("Alacritty terminal plugin wiring", () => {
     activate({ app, subscriptions: [] });
     expect(activateProvider).toHaveBeenCalledWith(app, [], {
       pluginId: "soksak-plugin-terminal-alacritty", engineId: "alacritty",
-      providerUnit: "terminal-alacritty", programId: "terminal-alacritty",
+      providerSidecar: "terminal-alacritty", programId: "terminal-alacritty",
     });
   });
 });
