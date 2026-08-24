@@ -23,7 +23,7 @@ for (const obsolete of ["release/dependencies.json", "release/source-dependencie
   if (fs.existsSync(path.join(root, obsolete))) throw new Error(`${obsolete} is obsolete`);
 }
 requireText("release-template/verify-plugin-release.mjs", "repeatable owner proof");
-requireText("make verify", "owner Make verification");
+if (workflow.includes("pnpm --dir frontend")) throw new Error("workflow duplicates the Make command graph");
 requireText("v0.0.23/soksak-ai-plugin-spec-0.0.23.tgz", "immutable spec package");
 requireText("707f108e69ebd4deac1e5572b9ffb6a5dc8db4953b8948c38a7ac315b189ff1b", "spec package digest");
 if (workflow.includes("repository: soksak-ai/soksak-spec")) throw new Error("release workflow must not checkout spec source");
