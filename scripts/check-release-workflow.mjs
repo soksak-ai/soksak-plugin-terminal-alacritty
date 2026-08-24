@@ -7,6 +7,10 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const workflow = fs.readFileSync(path.join(root, ".github/workflows/release.yml"), "utf8");
 const manifest = JSON.parse(fs.readFileSync(path.join(root, "plugin.json"), "utf8"));
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "frontend/package.json"), "utf8"));
+const nodeVersion = fs.readFileSync(path.join(root, ".node-version"), "utf8").trim();
+const makefile = fs.readFileSync(path.join(root, "Makefile"), "utf8");
+if (nodeVersion !== pkg.engines.node) throw new Error(".node-version and frontend engine differ");
+for (const target of ["preflight", "prepare", "build", "verify"]) if (!new RegExp(`^${target}:`, "m").test(makefile)) throw new Error(`Makefile target is missing: ${target}`);
 if (!fs.existsSync(path.join(root, "README.md"))) throw new Error("README.md is required");
 const requireText = (value, label) => { if (!workflow.includes(value)) throw new Error(`release workflow is missing ${label}: ${value}`); };
 if (typeof manifest.spec === "string" || "schema" in manifest) throw new Error("plugin manifest repeats schema metadata");
@@ -19,6 +23,7 @@ for (const obsolete of ["release/dependencies.json", "release/source-dependencie
   if (fs.existsSync(path.join(root, obsolete))) throw new Error(`${obsolete} is obsolete`);
 }
 requireText("release-template/verify-plugin-release.mjs", "repeatable owner proof");
+requireText("make verify", "owner Make verification");
 requireText("v0.0.23/soksak-ai-plugin-spec-0.0.23.tgz", "immutable spec package");
 requireText("707f108e69ebd4deac1e5572b9ffb6a5dc8db4953b8948c38a7ac315b189ff1b", "spec package digest");
 if (workflow.includes("repository: soksak-ai/soksak-spec")) throw new Error("release workflow must not checkout spec source");
