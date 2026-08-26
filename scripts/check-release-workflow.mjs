@@ -21,6 +21,8 @@ for (const sidecar of manifest.runtimeDependencies.sidecars) if (Object.keys(sid
 const requireText = (value, label) => { if (!workflow.includes(value)) throw new Error(`workflow is missing ${label}: ${value}`); };
 for (const value of ["spec_url:", "spec_sha256:", "${{ inputs.spec_url }}", "${{ inputs.spec_sha256 }}"]) requireText(value, "release-train input");
 requireText("release-template/verify-plugin-release.mjs", "owner release proof");
+// The owner Makefile installs @soksak packages only from a command-line REGISTRY; the proof names the public registry.
+requireText('verify-plugin-release.mjs --commit "${{ github.sha }}" --out dist-release --registry https://registry.npmjs.org/', "owner proof registry");
 requireText("release-template/publish-canonical-release.mjs", "canonical publisher");
 requireText("node-version-file: soksak-plugins/soksak-plugin-terminal-alacritty/.node-version", "Node owner");
 requireText("package_json_file: soksak-plugins/soksak-plugin-terminal-alacritty/frontend/package.json", "pnpm owner");
